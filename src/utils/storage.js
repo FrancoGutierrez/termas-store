@@ -55,3 +55,66 @@ export const saveGameSettings = (settings) => {
     console.error("Error saving game settings", e);
   }
 };
+
+const PRIZE_SESSION_KEY = 'termas_temu_prize_session_v1';
+const LEADS_KEY = 'termas_temu_leads_v1';
+
+export const getActivePrizeSession = () => {
+  try {
+    const raw = localStorage.getItem(PRIZE_SESSION_KEY);
+    if (!raw) return null;
+    const session = JSON.parse(raw);
+    if (session.expiresAt && Date.now() > session.expiresAt) {
+      localStorage.removeItem(PRIZE_SESSION_KEY);
+      return null;
+    }
+    return session;
+  } catch (e) {
+    console.error("Error reading prize session", e);
+    return null;
+  }
+};
+
+export const saveActivePrizeSession = (session) => {
+  try {
+    localStorage.setItem(PRIZE_SESSION_KEY, JSON.stringify(session));
+  } catch (e) {
+    console.error("Error saving prize session", e);
+  }
+};
+
+export const clearActivePrizeSession = () => {
+  try {
+    localStorage.removeItem(PRIZE_SESSION_KEY);
+  } catch (e) {
+    console.error("Error clearing prize session", e);
+  }
+};
+
+export const getLeads = () => {
+  try {
+    const raw = localStorage.getItem(LEADS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    console.error("Error reading leads", e);
+  }
+  return [];
+};
+
+export const saveLead = (lead) => {
+  try {
+    const current = getLeads();
+    const newLead = {
+      id: `lead-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      ...lead
+    };
+    const updated = [newLead, ...current];
+    localStorage.setItem(LEADS_KEY, JSON.stringify(updated));
+    return newLead;
+  } catch (e) {
+    console.error("Error saving lead", e);
+    return null;
+  }
+};
+

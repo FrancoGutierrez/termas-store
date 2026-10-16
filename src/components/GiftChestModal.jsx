@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 import { X, Gift, CheckCircle2 } from 'lucide-react';
 import { sounds } from '../utils/audio';
 
-export default function GiftChestModal({ isOpen, onClose, onWinCoupon }) {
+export default function GiftChestModal({ isOpen, onClose, onWinCoupon, onGoToProducts }) {
   const [openedIndex, setOpenedIndex] = useState(null);
   const [wonPrize, setWonPrize] = useState(null);
 
@@ -81,7 +81,7 @@ export default function GiftChestModal({ isOpen, onClose, onWinCoupon }) {
               Cupón <span className="text-emerald-700 font-extrabold">{wonPrize.code}</span> cargado con éxito.
             </p>
             <button
-              onClick={onClose}
+              onClick={onGoToProducts || onClose}
               className="btn-temu-primary text-xs py-2.5 px-6 mx-auto flex items-center gap-1.5 cursor-pointer shadow-md"
             >
               <CheckCircle2 className="w-4 h-4" />

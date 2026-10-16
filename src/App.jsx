@@ -12,7 +12,7 @@ import CheckoutModal from './components/CheckoutModal';
 import WinnerToast from './components/WinnerToast';
 import AdminPanelModal from './components/AdminPanelModal';
 
-import { getProducts, getGameSettings } from './utils/storage';
+import { getProducts, getGameSettings, getActivePrizeSession } from './utils/storage';
 import { sounds } from './utils/audio';
 
 export default function App() {
@@ -20,7 +20,7 @@ export default function App() {
   const [gameSettings, setGameSettings] = useState(() => getGameSettings());
   
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCoupon, setActiveCoupon] = useState(null); // { code, discountPercent, title }
+  const [activeCoupon, setActiveCoupon] = useState(() => getActivePrizeSession()); // { code, discountPercent, title, userName, userPhone }
   const [cartItems, setCartItems] = useState([]); // [{ product, qty, price }]
   
   // Modals state
@@ -32,8 +32,14 @@ export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // Auto open wheel modal on first visit after 2 seconds to boost engagement!
+  // Auto open wheel modal on first visit if no active prize exists
   useEffect(() => {
+    const active = getActivePrizeSession();
+    if (active) {
+      setActiveCoupon(active);
+      return; // Anti-refresh lock: do not reopen wheel
+    }
+
     const hasSeenWheel = sessionStorage.getItem('terma_has_seen_wheel');
     if (!hasSeenWheel) {
       const timer = setTimeout(() => {
@@ -44,6 +50,7 @@ export default function App() {
     }
   }, []);
 
+
   const handleWinCoupon = (coupon) => {
     setActiveCoupon(coupon);
 
@@ -53,6 +60,17 @@ export default function App() {
       const finalPrice = Math.min(calculatedPrice, item.product.normalPrice);
       return { ...item, price: finalPrice };
     }));
+  };
+
+  // Cierra cualquier modal de juego y lleva al cliente al catálogo de termas
+  const goToProducts = () => {
+    setIsWheelOpen(false);
+    setIsGiftChestOpen(false);
+    setIsScratchOpen(false);
+    // Esperar a que el modal se desmonte antes de hacer scroll
+    setTimeout(() => {
+      document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
   };
 
   const handleAddToCart = (product, price) => {
@@ -131,18 +149,21 @@ export default function App() {
         isOpen={isWheelOpen}
         onClose={() => setIsWheelOpen(false)}
         onWinCoupon={handleWinCoupon}
+        onGoToProducts={goToProducts}
       />
 
       <GiftChestModal
         isOpen={isGiftChestOpen}
         onClose={() => setIsGiftChestOpen(false)}
         onWinCoupon={handleWinCoupon}
+        onGoToProducts={goToProducts}
       />
 
       <ScratchCardModal
         isOpen={isScratchOpen}
         onClose={() => setIsScratchOpen(false)}
         onWinCoupon={handleWinCoupon}
+        onGoToProducts={goToProducts}
       />
 
       <ProductDetailModal
@@ -183,21 +204,23 @@ export default function App() {
       />
 
       {/* Modern Footer */}
-      <footer className="bg-white/80 border-t border-amber-200/60 py-10 px-4 mt-16 text-xs text-slate-500">
+      <footer className="relative bg-termo-900 text-termo-200 py-10 px-4 mt-16 text-xs">
+        {/* Franjas del logo */}
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 via-orange-500 to-red-600" />
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-black text-slate-900 text-base font-heading">TERMASTORE PRO</span>
+            <span className="font-black text-white text-base font-heading">TERMASTORE <span className="text-amber-400">PRO</span></span>
             <span>• © 2026 Todos los derechos reservados</span>
           </div>
 
-          <div className="flex items-center gap-4 text-slate-500">
+          <div className="flex items-center gap-4 text-termo-200">
             <span>Envío Nacional Garantizado</span>
             <span>•</span>
             <span>Atención 24/7 por WhatsApp</span>
             <span>•</span>
             <button
               onClick={() => setIsAdminOpen(true)}
-              className="text-orange-600 underline hover:text-orange-700 font-bold cursor-pointer"
+              className="text-amber-400 underline hover:text-amber-300 font-bold cursor-pointer"
             >
               ⚙️ Panel de Configuración
             </button>

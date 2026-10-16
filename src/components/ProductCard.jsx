@@ -8,7 +8,7 @@ export default function ProductCard({ product, activeCoupon, onOpenDetail, onAdd
   const totalSavings = product.originalPrice - finalPrice;
 
   return (
-    <div className="group bg-white border border-amber-200/70 hover:border-orange-400 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-orange-900/5 transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1">
+    <div className="group bg-white border border-termo-100 hover:border-termo-300 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-termo-900/10 transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1">
       
       {/* Product Image & Floating Badges */}
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
@@ -29,7 +29,7 @@ export default function ProductCard({ product, activeCoupon, onOpenDetail, onAdd
         </div>
 
         {/* Bottom image pill */}
-        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[11px] text-slate-800 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-amber-100 shadow-sm">
+        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[11px] text-slate-800 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-termo-100 shadow-sm">
           <span className="flex items-center gap-1.5 text-emerald-700 font-bold">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
             Envío Gratis
@@ -47,7 +47,7 @@ export default function ProductCard({ product, activeCoupon, onOpenDetail, onAdd
         <div className="space-y-2.5">
           {/* Brand & Reviews */}
           <div className="flex items-center justify-between text-xs">
-            <span className="text-orange-600 font-extrabold uppercase tracking-wider text-[10px]">
+            <span className="text-termo-700 font-extrabold uppercase tracking-wider text-[10px]">
               {product.brand}
             </span>
             <div className="flex items-center gap-1 text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
@@ -60,7 +60,7 @@ export default function ProductCard({ product, activeCoupon, onOpenDetail, onAdd
           {/* Product Title */}
           <h3 
             onClick={() => onOpenDetail(product)}
-            className="text-slate-900 font-extrabold text-base leading-snug line-clamp-2 hover:text-orange-600 cursor-pointer transition-colors font-heading"
+            className="text-termo-900 font-extrabold text-base leading-snug line-clamp-2 hover:text-orange-600 cursor-pointer transition-colors font-heading"
           >
             {product.name}
           </h3>
@@ -73,7 +73,7 @@ export default function ProductCard({ product, activeCoupon, onOpenDetail, onAdd
             <span className="bg-emerald-50 text-emerald-800 text-[10px] font-semibold px-2 py-0.5 rounded-md border border-emerald-200">
               A+++ Eficiencia
             </span>
-            <span className="bg-blue-50 text-blue-800 text-[10px] font-semibold px-2 py-0.5 rounded-md border border-blue-200">
+            <span className="bg-termo-50 text-termo-800 text-[10px] font-semibold px-2 py-0.5 rounded-md border border-termo-200">
               10 Años Garantía
             </span>
           </div>
@@ -92,7 +92,7 @@ export default function ProductCard({ product, activeCoupon, onOpenDetail, onAdd
             <span className="text-xs text-slate-700 font-extrabold flex items-center gap-1">
               🏆 Tu Precio Ganado:
             </span>
-            <span className="text-2xl font-black text-slate-900 font-heading">
+            <span className="text-2xl font-black text-termo-900 font-heading">
               <span className="text-orange-600 text-lg mr-0.5">S/</span>
               {finalPrice.toLocaleString('es-PE', { minimumFractionDigits: 2 })}
             </span>

@@ -27,7 +27,7 @@ export default function BannerTemuTimer({ onOpenWheel }) {
       </div>
       <button 
         onClick={onOpenWheel}
-        className="bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-black hover:bg-yellow-300 transition-all flex items-center gap-1 shadow-sm"
+        className="bg-amber-400 text-termo-900 px-3 py-1 rounded-full text-xs font-black hover:bg-amber-300 transition-all flex items-center gap-1 shadow-sm cursor-pointer"
       >
         <Sparkles className="w-3.5 h-3.5" />
         ¡RECLAMAR CUPÓN DE VICTORIA!

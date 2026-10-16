@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Star, ShieldCheck, CheckCircle2, ShoppingBag, Zap, Award } from 'lucide-react';
+import { X, Star, ShieldCheck, CheckCircle2, ShoppingBag, Zap, Award, MessageCircle, Gift } from 'lucide-react';
 
 export default function ProductDetailModal({ product, activeCoupon, onClose, onAddToCart }) {
   if (!product) return null;
@@ -115,6 +115,39 @@ export default function ProductDetailModal({ product, activeCoupon, onClose, onA
               ¡AÑADIR A MI CARRITO CON DESCUENTO!
             </button>
 
+            {/* Regalo Sorpresa WhatsApp Incentive */}
+            <div className="bg-gradient-to-r from-amber-100 via-orange-100 to-yellow-100 border-2 border-orange-400 p-4 rounded-2xl space-y-2.5 shadow-md">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center text-lg shadow-sm flex-shrink-0 animate-bounce">
+                  🎁
+                </div>
+                <div className="space-y-0.5">
+                  <div className="inline-flex items-center gap-1 bg-orange-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    ¡PROMOCIÓN EXCLUSIVA HOY!
+                  </div>
+                  <h4 className="text-xs sm:text-sm font-black text-slate-900 font-heading">
+                    ¿Quieres un REGALO SORPRESA adicional?
+                  </h4>
+                  <p className="text-[11px] text-slate-700 leading-tight">
+                    Llévate un kit de accesorios, válvula de seguridad o instalación bonificada consultando ahora por WhatsApp.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  const couponCode = activeCoupon ? activeCoupon.code : 'CLIENTE_WEB';
+                  const userName = activeCoupon && activeCoupon.userName ? ` Soy ${activeCoupon.userName}.` : '';
+                  const msg = encodeURIComponent(`Hola TermaStore Pro!${userName} Me interesa la ${product.name} y tengo el cupón ${couponCode}. ¿Cuál es mi REGALO SORPRESA adicional si confirmo hoy?`);
+                  window.open(`https://wa.me/51987654321?text=${msg}`, '_blank');
+                }}
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 hover:scale-[1.01] transition-all cursor-pointer"
+              >
+                <MessageCircle className="w-4 h-4 fill-white" />
+                <span>¡CONSULTAR MI REGALO POR WHATSAPP!</span>
+              </button>
+            </div>
+
           </div>
 
         </div>
@@ -122,3 +155,4 @@ export default function ProductDetailModal({ product, activeCoupon, onClose, onA
     </div>
   );
 }
+

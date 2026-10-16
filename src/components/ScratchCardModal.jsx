@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 import { X, Dices, Sparkles, CheckCircle2 } from 'lucide-react';
 import { sounds } from '../utils/audio';
 
-export default function ScratchCardModal({ isOpen, onClose, onWinCoupon }) {
+export default function ScratchCardModal({ isOpen, onClose, onWinCoupon, onGoToProducts }) {
   const canvasRef = useRef(null);
   const [isScratching, setIsScratching] = useState(false);
   const [scratchedPercent, setScratchedPercent] = useState(0);
@@ -105,7 +105,7 @@ export default function ScratchCardModal({ isOpen, onClose, onWinCoupon }) {
             <h3 className="text-lg font-black text-slate-900 font-heading">🎉 ¡FELICIDADES! COMPLETOTE EL RASPA Y GANA</h3>
             <p className="text-xs text-slate-600">Cupón de 45% OFF activado para tu compra.</p>
             <button
-              onClick={onClose}
+              onClick={onGoToProducts || onClose}
               className="btn-temu-primary text-xs py-2 px-6 mx-auto flex items-center gap-1.5 cursor-pointer shadow-md"
             >
               <CheckCircle2 className="w-4 h-4" />

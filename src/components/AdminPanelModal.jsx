@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { X, Settings, ShoppingBag, HelpCircle, Save, Plus, Edit2, Trash2, RotateCcw, Download, CheckCircle2, Flame } from 'lucide-react';
-import { saveProducts, resetProductsToDefault, saveGameSettings } from '../utils/storage';
+import React, { useState, useEffect } from 'react';
+import { X, Settings, ShoppingBag, HelpCircle, Save, Plus, Edit2, Trash2, RotateCcw, Download, CheckCircle2, Flame, Users, Phone, MessageCircle, ExternalLink } from 'lucide-react';
+import { saveProducts, resetProductsToDefault, saveGameSettings, getLeads } from '../utils/storage';
 
 export default function AdminPanelModal({ 
   isOpen, 
@@ -10,12 +10,20 @@ export default function AdminPanelModal({
   gameSettings, 
   setGameSettings 
 }) {
-  const [activeTab, setActiveTab] = useState('guide'); // 'guide' | 'products' | 'settings'
+  const [activeTab, setActiveTab] = useState('leads'); // 'leads' | 'products' | 'settings' | 'guide'
   const [editingProduct, setEditingProduct] = useState(null);
   const [isNewProduct, setIsNewProduct] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [leads, setLeads] = useState([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setLeads(getLeads());
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
+
 
   const showNotification = (msg) => {
     setSuccessMsg(msg);
@@ -105,22 +113,22 @@ export default function AdminPanelModal({
         )}
 
         {/* Tab Buttons */}
-        <div className="flex items-center gap-2 border-b border-amber-200/60 pb-3 mb-6">
+        <div className="flex items-center gap-2 border-b border-amber-200/60 pb-3 mb-6 overflow-x-auto">
           <button
-            onClick={() => setActiveTab('guide')}
-            className={`px-4 py-2 rounded-full text-xs font-black flex items-center gap-2 transition-all cursor-pointer ${
-              activeTab === 'guide'
+            onClick={() => setActiveTab('leads')}
+            className={`px-4 py-2 rounded-full text-xs font-black flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'leads'
                 ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm"
                 : "bg-slate-100 text-slate-700 hover:bg-amber-50"
             }`}
           >
-            <HelpCircle className="w-4 h-4" />
-            📘 Guía Estratégica
+            <Users className="w-4 h-4" />
+            👥 Leads Ruleta ({leads.length})
           </button>
 
           <button
             onClick={() => setActiveTab('products')}
-            className={`px-4 py-2 rounded-full text-xs font-black flex items-center gap-2 transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-black flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'products'
                 ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm"
                 : "bg-slate-100 text-slate-700 hover:bg-amber-50"
@@ -132,7 +140,7 @@ export default function AdminPanelModal({
 
           <button
             onClick={() => setActiveTab('settings')}
-            className={`px-4 py-2 rounded-full text-xs font-black flex items-center gap-2 transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-full text-xs font-black flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'settings'
                 ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm"
                 : "bg-slate-100 text-slate-700 hover:bg-amber-50"
@@ -141,10 +149,106 @@ export default function AdminPanelModal({
             <Settings className="w-4 h-4" />
             ⚙️ Ajustes de Tienda
           </button>
+
+          <button
+            onClick={() => setActiveTab('guide')}
+            className={`px-4 py-2 rounded-full text-xs font-black flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'guide'
+                ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm"
+                : "bg-slate-100 text-slate-700 hover:bg-amber-50"
+            }`}
+          >
+            <HelpCircle className="w-4 h-4" />
+            📘 Guía Estratégica
+          </button>
         </div>
+
+
+        {/* TAB 0: LEADS CAPTURADOS */}
+        {activeTab === 'leads' && (
+          <div className="space-y-4 max-h-[62vh] overflow-y-auto pr-2">
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 p-4 rounded-2xl flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-black text-slate-900 font-heading">
+                  👥 Prospectos Capturados por la Ruleta ({leads.length})
+                </h3>
+                <p className="text-xs text-slate-600">
+                  Clientes que giraron la ruleta y dejaron su WhatsApp para activar su cupón.
+                </p>
+              </div>
+              <button
+                onClick={() => setLeads(getLeads())}
+                className="btn-glass text-xs py-2 px-3 font-bold cursor-pointer"
+              >
+                🔄 Actualizar
+              </button>
+            </div>
+
+            {leads.length === 0 ? (
+              <div className="text-center py-12 text-slate-400 bg-amber-50/40 rounded-2xl border border-dashed border-amber-300">
+                <Users className="w-12 h-12 mx-auto mb-2 text-slate-300" />
+                <p className="font-bold text-sm text-slate-600">Aún no hay prospectos registrados</p>
+                <p className="text-xs text-slate-400 mt-1">
+                  En cuanto un cliente gire la ruleta y complete su nombre y WhatsApp, aparecerá aquí al instante.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {leads.map((lead) => {
+                  const dateStr = new Date(lead.createdAt).toLocaleDateString('es-PE', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    day: '2-digit',
+                    month: 'short'
+                  });
+                  const waMsg = encodeURIComponent(`Hola ${lead.name}! Vimos que ganaste el cupón ${lead.couponCode} (${lead.discountPercent}% OFF) en nuestra tienda de termas solares. ¿Qué modelo te gustaría que te coticemos?`);
+                  const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
+                  const waLink = `https://wa.me/51${cleanPhone.startsWith('51') ? cleanPhone.slice(2) : cleanPhone}?text=${waMsg}`;
+
+                  return (
+                    <div
+                      key={lead.id}
+                      className="bg-white border border-amber-200/80 p-3.5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs hover:border-orange-400 transition-all"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-black text-slate-900 text-sm">{lead.name}</span>
+                          <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-mono">
+                            {dateStr}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs text-slate-600">
+                          <span className="flex items-center gap-1 font-mono font-bold text-slate-800">
+                            <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                            {lead.phone}
+                          </span>
+                          <span>•</span>
+                          <span className="text-orange-600 font-extrabold">
+                            🏆 {lead.prizeTitle || lead.couponCode}
+                          </span>
+                        </div>
+                      </div>
+
+                      <a
+                        href={waLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-temu-gold text-xs py-2 px-4 justify-center gap-1.5 font-black whitespace-nowrap shadow-xs cursor-pointer flex items-center"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>Chatear por WhatsApp</span>
+                      </a>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* TAB 1: TUTORIAL GUIDE */}
         {activeTab === 'guide' && (
+
           <div className="space-y-6 text-slate-700 text-xs leading-relaxed max-h-[62vh] overflow-y-auto pr-2">
             
             <div className="bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border border-amber-200 p-5 rounded-2xl space-y-2">
